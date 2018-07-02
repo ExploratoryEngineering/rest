@@ -128,3 +128,21 @@ func (r *ParameterRouter) GetHandler(uri string) http.HandlerFunc {
 	logging.Debug("No matching handler for %s", uri)
 	return http.NotFound
 }
+
+// GetPathKey is a simple utility function that will return the (string) value
+// for the specified key in the path. If there's an error it will return an
+// empty string.
+func GetPathKey(name string, r *http.Request) string {
+	if r == nil {
+		return ""
+	}
+	v := r.Context().Value(PathParameter(name))
+	if v == nil {
+		return ""
+	}
+	stringVal, ok := v.(string)
+	if !ok {
+		return ""
+	}
+	return stringVal
+}

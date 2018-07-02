@@ -16,10 +16,12 @@ package rest
 //limitations under the License.
 //
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -74,6 +76,29 @@ func TestRouting(t *testing.T) {
 
 	if invocationCount != len(matchingRoutes) {
 		t.Errorf("Did not get the expected number of matches. Got %d expected %d.", invocationCount, len(matchingRoutes))
+	}
+}
+
+func TestPathKeys(t *testing.T) {
+	r := httptest.NewRequest("GET", "/hello", strings.NewReader("{}"))
+
+	if GetPathKey("param",
+		r.WithContext(
+			context.WithValue(
+				r.Context(), PathParameter("param"), "value"))) != "value" {
+		t.Fatal("Did not get the value I expected")
+	}
+	if GetPathKey("param", nil) != "" {
+		t.Fatal("Expected empty string for nil request")
+	}
+	if GetPathKey("param", r) != "" {
+		t.Fatal("Expected empty string with no params in context")
+	}
+	if GetPathKey("param",
+		r.WithContext(
+			context.WithValue(
+				r.Context(), PathParameter("param"), 12))) != "" {
+		t.Fatal("Expected empty string for non-string values")
 	}
 }
 
