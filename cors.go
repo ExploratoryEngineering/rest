@@ -25,7 +25,7 @@ func AddCORSHeaders(handler http.HandlerFunc) http.HandlerFunc {
 			origin = "*"
 		}
 		w.Header().Set("Access-Control-Allow-Origin", origin)
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, DELETE, PATCH, PUT")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		requestedHeaders := r.Header.Get("Access-Control-Request-Headers")
