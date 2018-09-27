@@ -60,6 +60,7 @@ func WebsocketHandler(streamer WebsocketStreamer) http.HandlerFunc {
 				}
 				buf, err := json.Marshal(msg)
 				if err != nil {
+					logging.Warning("Got error marshalling message %+v: %v", msg, err)
 					return
 				}
 				_, err = ws.Write(buf)
