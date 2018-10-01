@@ -32,6 +32,12 @@ func (t *testStreamer) Input() <-chan interface{} {
 	return ch
 }
 
+func (t *testStreamer) KeepaliveMessage() interface{} {
+	return struct {
+		Type string `json:"type"`
+	}{"keepAlive"}
+}
+
 func TestWebsocketHandler(t *testing.T) {
 	server := httptest.NewServer(WebsocketHandler(&testStreamer{}))
 

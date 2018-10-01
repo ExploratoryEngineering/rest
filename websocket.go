@@ -35,10 +35,14 @@ type WebsocketStreamer interface {
 	Setup(r *http.Request) error
 	Cleanup()
 	Input() <-chan interface{}
+	KeepaliveMessage() interface{}
 }
 
-type timeoutMessage struct {
-	KeepAlive bool `json:"keepAlive"`
+// DefaultKeepAliveMessage is the default KeepAlive-message
+func DefaultKeepAliveMessage() interface{} {
+	return struct {
+		KeepAlive bool `json:"keepAlive"`
+	}{true}
 }
 
 // WebsocketHandler generates a http.HandlerFunc from the websocket adapter
@@ -69,7 +73,11 @@ func WebsocketHandler(streamer WebsocketStreamer) http.HandlerFunc {
 					return
 				}
 			case <-time.After(timeoutSeconds * time.Second):
-				buf, err := json.Marshal(&timeoutMessage{true})
+				msg := streamer.KeepaliveMessage()
+				if msg == nil {
+					continue
+				}
+				buf, err := json.Marshal(&msg)
 				if err != nil {
 					return
 				}
