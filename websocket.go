@@ -17,10 +17,10 @@ package rest
 //
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
-	"github.com/ExploratoryEngineering/logging"
 	"golang.org/x/net/websocket"
 )
 
@@ -51,7 +51,7 @@ func WebsocketHandler(streamer WebsocketStreamer) http.HandlerFunc {
 		defer ws.Close()
 		if err := streamer.Setup(ws.Request()); err != nil {
 			// write error and return
-			logging.Warning("Setup error: %v", err)
+			log.Printf("Setup error: %v", err)
 			return
 		}
 		defer streamer.Cleanup()
@@ -64,12 +64,12 @@ func WebsocketHandler(streamer WebsocketStreamer) http.HandlerFunc {
 				}
 				buf, err := json.Marshal(msg)
 				if err != nil {
-					logging.Warning("Got error marshalling message %+v: %v", msg, err)
+					log.Printf("Got error marshalling message %+v: %v", msg, err)
 					return
 				}
 				_, err = ws.Write(buf)
 				if err != nil {
-					logging.Warning("Error writing. Exiting: %v", err)
+					log.Printf("Error writing. Exiting: %v", err)
 					return
 				}
 			case <-time.After(timeoutSeconds * time.Second):
@@ -83,7 +83,7 @@ func WebsocketHandler(streamer WebsocketStreamer) http.HandlerFunc {
 				}
 				_, err = ws.Write(buf)
 				if err != nil {
-					logging.Warning("Error writing. Exiting: %v", err)
+					log.Printf("Error writing. Exiting: %v", err)
 					return
 				}
 			}

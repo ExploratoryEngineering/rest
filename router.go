@@ -18,11 +18,10 @@ package rest
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"regexp"
 	"strings"
-
-	"github.com/ExploratoryEngineering/logging"
 )
 
 // PathParameter is the type used when storing parameters in the context
@@ -125,7 +124,7 @@ func (r *ParameterRouter) GetHandler(uri string) http.HandlerFunc {
 			}
 		}
 	}
-	logging.Debug("No matching handler for %s", uri)
+	log.Printf("No matching handler for %s", uri)
 	return http.NotFound
 }
 
